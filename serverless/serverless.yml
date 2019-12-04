@@ -8,8 +8,6 @@ provider:
     # Access the published endpoint for abalone age prediction.
     - Effect: "Allow"
       Action:
-        - "sagemaker:DescribeEndpoint"
-        - "sagemaker:DescribeEndpointConfig"
         - "sagemaker:InvokeEndpoint"
       Resource:
         - "arn:aws:sagemaker:us-east-1:679892560156:*"
@@ -34,8 +32,8 @@ functions:
   hello:
     handler: src.handler.hello
 
-  callEndpoint:
-    handler: src.handler.call_endpoint
+  testEndpoint:
+    handler: src.handler.test_endpoint
     # events:
     #   - s3:
     #     bucket: ${env:S3_BUCKET}
@@ -94,8 +92,8 @@ functions:
 #       Description: "Description for the output"
 #       Value: "Some output value"
 
-plugins:
-  - serverless-python-requirements
-custom:
-  pythonRequirements:
-    dockerizePip: non-linux
+# plugins:
+#   - serverless-python-requirements
+# custom:
+#   pythonRequirements:
+#     dockerizePip: non-linux

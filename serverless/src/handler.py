@@ -3,30 +3,27 @@ def hello(event, context):
     return {"message": "It's alive!", "event": event}
 
 
-def call_endpoint(event, context):
-    """Process incoming CSV"""
-    print(f"event: {event}")
+def test_endpoint(event, context):
+    """Invoke the endpoint with some sample data"""
+    import boto3
+    import ast
 
+    abalone_stats = """
+    M,0.35,0.265,0.09,0.2255,0.0995,0.0485,0.07
+    M,0.35,0.265,0.09,0.2255,0.0995,0.0485,0.07
+    M,0.44,0.365,0.125,0.516,0.2155,0.114,0.155
+    I,0.33,0.255,0.08,0.205,0.0895,0.0395,0.055
+    """
     endpoint_name = "inference-pipeline-ep-2019-12-02-21-58-33"
-
-    from sagemaker.predictor import (
-        csv_serializer,
-        json_deserializer,
-        RealTimePredictor,
-    )
-    from sagemaker.content_types import CONTENT_TYPE_CSV, CONTENT_TYPE_JSON
-
-    payload = "M, 0.35, 0.365, 0.125, 0.516, 0.2155, 0.114, 0.155"
-    predictor = RealTimePredictor(
-        endpoint=endpoint_name,
-        #     sagemaker_session=sagemaker_session,
-        serializer=csv_serializer,
-        deserializer=json_deserializer,
-        content_type=CONTENT_TYPE_CSV,
-        accept=CONTENT_TYPE_JSON,
+    runtime = boto3.Session().client(
+        service_name="sagemaker-runtime", region_name="us-east-1"
     )
 
-    result = predictor.predict(payload)
-    print(f"result: {result}")
+    response = runtime.invoke_endpoint(
+        EndpointName=endpoint_name, ContentType="text/csv", Body=abalone_stats
+    )
+
+    # Decode using the utf-8 encoding, turn into string
+    result = ast.literal_eval(response["Body"].read().decode("utf-8"))
 
     return result
