@@ -27,3 +27,14 @@ def test_endpoint(event, context):
     result = ast.literal_eval(response["Body"].read().decode("utf-8"))
 
     return result
+
+
+def create_estimator(event, context):
+    from sagemaker.sklearn.estimator import SKLearn
+
+    # script_path = "sklearn_abalone_featurizer.py"
+
+    # sklearn_preprocessor = SKLearn(
+    #     entry_point=script_path, role=role, train_instance_type="ml.c4.xlarge"
+    # )
+    return "Alrighty then."
